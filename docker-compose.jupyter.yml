@@ -1,0 +1,11 @@
+version: '3'
+
+services:
+  tdh_jupyter_notebook:
+    container_name: tdh_jupyter_notebook
+    labels:
+      name: jupyter notebook
+    ports:
+      - "8888:8888"
+    
+    build: ./notebooks
