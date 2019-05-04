@@ -3,6 +3,7 @@
 import os
 from time import sleep
 import json
+import glob 
 
 import csv
 
@@ -21,18 +22,22 @@ def run():
         value_serializer=lambda value: json.dumps(value).encode(),
     )
 
-    ifname = "data/aggressive_longitudinal_acceleration_1549653321089461.csv"
+    ifolder = "data/"
 
-    with open(ifname, 'r') as ifile:
+    ifiles = [f for f in glob.glob(ifolder + "*.csv", recursive=True)]
 
-        reader = csv.DictReader(ifile)
 
-        for row in reader:
-            transaction: dict = row
+    # iterate input files 
+    for ifname in ifiles:
 
-            producer.send(TRANSACTIONS_TOPIC, value=transaction)
-            print(transaction)  # DEBUG
-            sleep(SLEEP_TIME)
+        with open(ifname, 'r') as ifile:
+            reader = csv.DictReader(ifile)
+            for row in reader:
+                transaction: dict = row
+
+                producer.send(TRANSACTIONS_TOPIC, value=transaction)
+                print(transaction)  # DEBUG
+                sleep(SLEEP_TIME)
 
 
 if __name__ == '__main__':
