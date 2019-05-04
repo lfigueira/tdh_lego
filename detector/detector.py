@@ -15,6 +15,33 @@ PUBLISH_TOPIC = os.environ.get('PUBLISH_TOPIC')
 # TODO: needs to be tested
 PRODUCER_LINGER_MS=2000
 
+def detect_accel_x(transaction):
+    
+    # break events
+    # only uses accel_x
+    # None if accel is zero; if positive assumes it's accelerating        
+    if float(transaction["accel_x"]) < 0: 
+        transaction["break_event"] = True
+    elif float(transaction["accel_x"]) == 0: 
+        transaction["break_event"] = None
+    else: 
+        transaction["break_event"] = False
+    
+    return transaction
+
+
+def detect_rgt_curve(transaction):
+    # turn left/right events
+    # if yaw is positive assume it's a right turn, of left otherwise
+    if float(transaction["gyro_yaw"]) > 0: 
+        transaction["rgt_turn"] = True
+    elif float(transaction["gyro_yaw"]) == 0: 
+        transaction["rgt_turn"] = None
+    else: 
+        transaction["rgt_turn"] = False
+    
+    return transaction
+
 
 if __name__ == '__main__':
     consumer = KafkaConsumer(
@@ -30,14 +57,14 @@ if __name__ == '__main__':
         linger_ms=PRODUCER_LINGER_MS
     )
 
-    for message in consumer:
-        # 
+    for message in consumer:        
         transaction: dict = message.value
 
-        transaction["mais"] = "BENFICA"
+        # enrich the transction
+        transaction = detect_rgt_curve(transaction)
+        transaction = detect_accel_x(transaction)
 
-        # topic = FRAUD_TOPIC if is_suspicious(transaction) else LEGIT_TOPIC
-
+        # publishes the enriched message to a new topic
         producer.send(PUBLISH_TOPIC, value=transaction)
 
         print("Enriched transaction {}", transaction)  # DEBUG
