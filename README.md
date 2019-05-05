@@ -24,7 +24,6 @@ This was stored in a Pandas dataframe column.
 
 **Jerk:** based on the previous assumption computed jerk as the delta acceleration over delta time. This were computed for each individual dataset. Three new columns were added (`delta_accel`, `delta_time` and `jerk`).
 
-
 ### Stream Processing 
 
 _Note: This solution was adopted from the code/tutorial found on: 
@@ -57,14 +56,15 @@ The following commands will launch the containers needed to run the solution.
 
 The last command will start the generator and detector scripts. The generator will load all files and send messages to the kafka broker, publishing on the `queueing.transactions` topic. The detector will be consuming this topic and enrich each message with break and right turn information. Each procesed message will be inserted in the MongoDB database.
 
-To query the MongoDB database you can use the  notebook in the notebooks docker container: 
+To query the MongoDB database you can use the  notebook (run from the docker container): 
    
    ```notebooks/db_query.ipynb```
 
-This notebook will query the db/collection `lego.test` and print all entries.
+This notebook will execute a very simple query on the `lego.test` collection and print all entries that have been populated by the detector script.
 
 ### Known issues
-* The data folder is not shared by both solutions;
-* The Mongodb database is not being saved in a local folder (is being recreated each time the container is run).
+* The detector script is inserting the rows immediately, when it shoudl be inserting the results ever n seconds; 
+* The data folder is not shared by both solutions (duplicate data);
+* The Mongodb database is not being saved in a local folder.
 
 
