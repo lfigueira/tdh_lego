@@ -1,0 +1,10 @@
+version: '3'
+
+services:
+  mongosrv:
+    image: mongo:latest
+
+networks:
+  default:
+    external:
+      name: kafka-network
