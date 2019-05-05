@@ -36,12 +36,11 @@ The solution uses Kafka to interact with the data streaming and consuming script
 ![Alt text](/img/tdh_lego_arch.png?raw=true "Streaming solution architecture diagram")
 
 The project is organised in docker containers as follows: 
-* `docker-compose.yml`: starts two  services: a generator and a detector. Both services interact ith the Kafka broker and are started at the same time. The generator service loads the csv files and publishes them to the Kafka broker, simulating a streaming application. The detector service consumes the same topic from  the Kafka broker. The detector app also enriches each data row, adding two fields: `break_event` and `rgt_turn`;
+* `docker-compose.yml`: starts two  services: a generator and a detector. Both services interact ith the Kafka broker and are started at the same time. The generator service loads the csv files and publishes them to the Kafka broker, simulating a streaming application. The detector service consumes the same topic from  the Kafka broker. The detector app also enriches each data row, adding two fields: `break_event` and `rgt_turn`. The final data row is then inserted into the MondoDB collection;
 * `docker-compose.kafka.yml`: container for the Kafka and Zookeeper services. This should be the first container to run;
 * `docker-compose.mongo.yml`: MongoDB server container. 
 
-Running this container will launch 2 services: a generator service, which loads the data files and streams them into a Kafka topic, and a detector app, which consumes the Kafka topic, enriches the transactions and publishes them as a new Kafka topic. 
-
+### Running the containers/scripts
 The following commands will launch the containers needed to run the solution, as well as start the scripts that stream and store the data: 
 1. Create the network shared by all containers:
 
@@ -56,13 +55,13 @@ The following commands will launch the containers needed to run the solution, as
   
    ```docker-compose up --build```
 
-The last command will start the generator and detector scripts. The generator will load all files and send messages to the kafka broker, publishing on the `queueing.transactions` topic. The detector will be consuming this topic and enrich each message with break and right turn information. Each processed message will be inserted in the MongoDB database.
+The last command will start the generator and detector scripts. The generator will load all files and send messages to the kafka broker, publishing on the `queueing.transactions` topic. The detector consumes this topic and enriches each message/row with domain specific information (break and right turn information). Each processed message is then inserted in the MongoDB database.
 
-To query the MongoDB database you can use the  notebook (run from the docker container): 
+To query the MongoDB collection you can use the following Jupyter notebook (run from the docker container): 
    
    ```notebooks/db_query.ipynb```
 
-This notebook will execute a very simple query on the `lego.test` collection and print all entries that have been populated by the detector script.
+This notebook executes a very simple query on the `lego.test` collection,  printing all entries that have been populated by the detector script.
 
 ### Assumptions
 Two fields were added to each row: 
@@ -70,9 +69,7 @@ Two fields were added to each row:
 * `rgt_turn`: True if `gyro_yaw` is positive, False if negative and None otherwise.
 
 ## Known issues
-* The detector script is inserting the rows immediately, when it shoudl be inserting the results ever n seconds; 
+* The detector script is inserting the rows immediately, when it should be inserting the results every _n_ seconds; 
 * The data folder is not shared by both solutions (duplicate data);
-* The Mongodb database is not being saved in a local folder;
-* no tests.
-
-
+* The Mongodb database is not being saved in a local folder (not persisting);
+* no tests were written.
