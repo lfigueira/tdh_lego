@@ -11,11 +11,17 @@ The streaming solution was implemented using Kafka for stream processing and Mon
 Please see below for specific instructions on each of the challenge's sections, together with  comments on the assumptions made and known issues. 
 
 ## Batch Processing
-A container was created to run the batch processing. Run it using the command below: 
+A container was created to run the batch processing. Run it using the commands below: 
 
-```docker-compose -f docker-compose.jupyter.yml up --build```
+ 1. Create the network shared by all containers:
 
-This will launch a Jupyter notebook. Navigate and run the notebook `batch.ipynb`.
+   ```docker network create kafka-network```
+
+2. Run the container with the Jupyter notebook server:
+
+   ```docker-compose -f docker-compose.jupyter.yml up --build```
+
+The last command will launch a Jupyter notebook. Navigate and run the notebook `batch.ipynb`.
 
 This notebook contains all the code to load the data and process it according to the challenge instructions. 
 
@@ -42,7 +48,7 @@ The project is organised in docker containers as follows:
 
 ### Running the containers/scripts
 The following commands will launch the containers needed to run the solution, as well as start the scripts that stream and store the data: 
-1. Create the network shared by all containers:
+1. Create the network shared by all containers (please skip this step if you have already created this network for the batch processing notebook described above):
 
    ```docker network create kafka-network```
 1. Start the Kafka broker:
