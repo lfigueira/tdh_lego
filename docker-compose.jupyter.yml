@@ -9,3 +9,8 @@ services:
       - "8888:8888"
     
     build: ./notebooks
+
+networks:
+  default:
+    external:
+      name: kafka-network
