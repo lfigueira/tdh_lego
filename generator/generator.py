@@ -26,7 +26,6 @@ def run():
 
     ifiles = [f for f in glob.glob(ifolder + "*.csv", recursive=True)]
 
-
     # iterate input files 
     for ifname in ifiles:
 
