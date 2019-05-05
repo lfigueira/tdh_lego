@@ -15,7 +15,7 @@ A container was created to run the batch processing. Run it using the commands b
 
  1. Create the network shared by all containers:
 
-   ```docker network create kafka-network```
+    ```docker network create kafka-network```
 
 2. Run the container with the Jupyter notebook server:
 
