@@ -2,7 +2,7 @@
 TDH Lego Truck Big Data Challenge No.3 solution. 
 
 ## Description
-The solution outline below uses Python tools and libraries to process the data. These are organised using docker images/containers to ease reproducing the results. 
+The solution outlined below uses Python tools and libraries to process the data. These are organised using Docker images/containers to ease reproducing the results. 
 
 The batch processing uses Pandas to load, enrich and aggregate the data. It is presented in a Jupyter notebook.
 
