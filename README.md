@@ -31,7 +31,7 @@ This was stored in a Pandas dataframe column.
 _Note: This solution was adopted from the code/tutorial found on: 
 [Building A Streaming Fraud Detection System With Kafka And Python](https://blog.florimondmanca.com/building-a-streaming-fraud-detection-system-with-kafka-and-python)._ 
 
-The solution uses Kafka as a streamer and a consumer of data. Kafka is used via the `kafka-python` library, which interfaces the underlying Kafka. The following image describes the architecture: 
+The solution uses Kafka to interact with the data streaming and consuming scripts. Kafka is used via the `kafka-python` Python library, which interfaces the underlying Kafka. The following image describes the architecture: 
 
 ![Alt text](/img/tdh_lego_arch.png?raw=true "Streaming solution architecture diagram")
 
