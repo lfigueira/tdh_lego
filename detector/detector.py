@@ -4,6 +4,7 @@ import json
 import os
 
 from kafka import KafkaConsumer, KafkaProducer
+from pymongo import MongoClient
 
 KAFKA_BROKER_URL = os.environ.get('KAFKA_BROKER_URL')
 TRANSACTIONS_TOPIC = os.environ.get('TRANSACTIONS_TOPIC')
@@ -57,14 +58,24 @@ if __name__ == '__main__':
         linger_ms=PRODUCER_LINGER_MS
     )
 
+    # create a mongoDB client
+    client = MongoClient('mongosrv:27017')
+    # create a collection
+    collection = client.lego.test
+
     for message in consumer:        
         transaction: dict = message.value
 
         # enrich the transction
+        # detect right/left curves
         transaction = detect_rgt_curve(transaction)
+        
+        # detect acceleration
         transaction = detect_accel_x(transaction)
 
-        # publishes the enriched message to a new topic
-        producer.send(PUBLISH_TOPIC, value=transaction)
+        collection.insert_one(transaction)
+        print('Message {} inserted into {}'.format(message, collection))
 
-        print("Enriched transaction {}", transaction)  # DEBUG
+        # Can publish the enriched message to a new topic as well
+        # producer.send(PUBLISH_TOPIC, value=transaction)
+        # print("Enriched transaction {}", transaction)  # DEBUG
