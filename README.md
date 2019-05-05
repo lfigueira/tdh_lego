@@ -1,23 +1,12 @@
 # TDH Lego Truck Big Data Challenge
 TDH Lego Truck Big Data Challenge No.3 solution. 
 
-## General Description
-
-## Folder Structure
-
 ## Setting up 
 The project is organised in four different Docker files. 
 
 In order to run the Batch mode you need to run the `notebooks` container. 
 
 To run Streaming mode you also need to run the Kafka broker, generator+detector and mongodb containers. 
-
-## Running the generator and the detector
-
-Running this container will launch 2 services: a generator service, which loads the data files and streams them into a Kafka topic, and a detector app, which consumes the Kafka topic, enriches the transactions and publishes them as a new Kafka topic. 
-
-
-```docker-compose up --build```
 
 ### Batch Processing
 A container was created to run the batch processing. Run it using 
@@ -26,7 +15,7 @@ A container was created to run the batch processing. Run it using
 
 This will launch a Jupyter notebook. Navigate and run the notebook `batch.ipynb`.
 
-This notebook contains all the code to load the data and process it according to the instructions. 
+This notebook contains all the code to load the data and process it according to the challenge instructions. 
 
 #### Assumptions
 
@@ -41,9 +30,16 @@ This was stored in a Pandas dataframe column.
 _Note: This solution was adopted from the code/tutorial found on: 
 [Building A Streaming Fraud Detection System With Kafka And Python](https://blog.florimondmanca.com/building-a-streaming-fraud-detection-system-with-kafka-and-python)._ 
 
-## Architecture
+The solution uses Kafka as a streamer and a consumer of data. Kafka is used via the `kafka-python` library, which interfaces the underlying Kafka. The following image describes the architecture: 
 
-![Alt text](/img/tdh_lego_arch.png?raw=true "Solution architecture diagram")
+![Alt text](/img/tdh_lego_arch.png?raw=true "Streaming solution architecture diagram")
+
+The project is organised in docker containers as follows: 
+* `docker-compose.yml`: starts two  services: a generator and a detector. Both services interact ith the Kafka broker and are started at the same time. The generator service loads the csv files and publishes them to the Kafka broker, simulating a streaming application. The detector service consumes the same topic from  the Kafka broker. The detector app also enriches each data row, adding two fields: `break_event` and `rgt_turn`;
+* `docker-compose.kafka.yml`: container for the Kafka and Zookeeper services. This should be the first container to run;
+* `docker-compose.mongo.yml`: MongoDB server container. 
+
+Running this container will launch 2 services: a generator service, which loads the data files and streams them into a Kafka topic, and a detector app, which consumes the Kafka topic, enriches the transactions and publishes them as a new Kafka topic. 
 
 The following commands will launch the containers needed to run the solution. 
 1. Create the network 
