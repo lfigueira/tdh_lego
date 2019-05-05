@@ -1,15 +1,17 @@
 # TDH Lego Truck Big Data Challenge
 TDH Lego Truck Big Data Challenge No.3 solution. 
 
-## Setting up 
-The project is organised in four different Docker files. 
+## Description
+The solution outline below uses Python tools and libraries to process the data. These are organised using docker images/containers to ease reproducing the results. 
 
-In order to run the Batch mode you need to run the `notebooks` container. 
+The batch processing uses Pandas to load, enrich and aggregate the data. It is presented in a Jupyter notebook.
 
-To run Streaming mode you also need to run the Kafka broker, generator+detector and mongodb containers. 
+The streaming solution was implemented using Kafka for stream processing and MongoDB as the database. 
 
-### Batch Processing
-A container was created to run the batch processing. Run it using 
+Please see below for specific instructions on each of the challenge's sections, together with  comments on the assumptions made and known issues. 
+
+## Batch Processing
+A container was created to run the batch processing. Run it using the command below: 
 
 ```docker-compose -f docker-compose.jupyter.yml up --build```
 
@@ -17,14 +19,14 @@ This will launch a Jupyter notebook. Navigate and run the notebook `batch.ipynb`
 
 This notebook contains all the code to load the data and process it according to the challenge instructions. 
 
-#### Assumptions
+### Assumptions
 
 **Mean acceleration:** calculated using the scalar mean; this does not take into account the direction of the acceleration. Acceleration was computed as the square root of the sum of each of it's axial components sum (sqrt(x^2+y^2+z^2)). 
 This was stored in a Pandas dataframe column. 
 
 **Jerk:** based on the previous assumption computed jerk as the delta acceleration over delta time. This were computed for each individual dataset. Three new columns were added (`delta_accel`, `delta_time` and `jerk`).
 
-### Stream Processing 
+## Stream Processing 
 
 _Note: This solution was adopted from the code/tutorial found on: 
 [Building A Streaming Fraud Detection System With Kafka And Python](https://blog.florimondmanca.com/building-a-streaming-fraud-detection-system-with-kafka-and-python)._ 
@@ -62,12 +64,12 @@ To query the MongoDB database you can use the  notebook (run from the docker con
 
 This notebook will execute a very simple query on the `lego.test` collection and print all entries that have been populated by the detector script.
 
-#### Assumptions
+### Assumptions
 Two fields were added to each row: 
 * `break_event`: True if `accel_x` is positive, False if negative and None otherwise;
 * `rgt_turn`: True if `gyro_yaw` is positive, False if negative and None otherwise.
 
-### Known issues
+## Known issues
 * The detector script is inserting the rows immediately, when it shoudl be inserting the results ever n seconds; 
 * The data folder is not shared by both solutions (duplicate data);
 * The Mongodb database is not being saved in a local folder;
